@@ -34,6 +34,7 @@ class StoreCorpus:
       QUERY = "INSERT INTO corpus VALUES ({0},\'{1}\')".format(ident,text)
       c.execute(QUERY)
       conn.commit()
+
   def deleteDB(self):
     conn = sqlite3.connect(self._namedb)
     QUERY = "DROP TABLE corpus"

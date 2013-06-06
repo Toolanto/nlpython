@@ -1,0 +1,4 @@
+0,"ciao sono a casa"
+1,"ciao sono al mare"
+2,"non dire ciao"
+3,"ciao ciao no"
