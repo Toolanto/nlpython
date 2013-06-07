@@ -3,6 +3,7 @@
 import csv
 from store import *
 
+
 class DocumentHandler:
   def __init__(self,path,dialect=csv.Dialect.delimiter):
     self._path = path

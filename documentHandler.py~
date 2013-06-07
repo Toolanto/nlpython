@@ -1,14 +1,15 @@
-### Developer Antonio Luca
+# Developer Antonio Luca
 
 import csv
 from store import *
+
 
 class DocumentHandler:
   def __init__(self,path,dialect=csv.Dialect.delimiter):
     self._path = path
     self._dialect = dialect
   def __iter__(self):
-    document_file = open(self._path,'rb')
+    document_file = open(self._path,'rb','utf-8-sig')
     self._documents = csv.reader(document_file,self._dialect)
     return self
   def next(self):

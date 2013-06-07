@@ -1,4 +1,4 @@
-### Developer Antonio Luca
+# Developer Antonio Luca
 
 import sqlite3
 import random
@@ -9,7 +9,7 @@ class Store:
   def deleteDB(self): pass
 
 class StoreCorpus(Store):        
-  
+
   def __init__(self,namedb):
     self._namedb = namedb
   
@@ -17,7 +17,8 @@ class StoreCorpus(Store):
     conn = sqlite3.connect(self._namedb)
     TABLE = "CREATE TABLE corpus (id number, document text)"
     conn.execute(TABLE)
-  
+
+  #documentHandler è un iteratore
   def storeDB(self, documentHandler):
     conn = sqlite3.connect(self._namedb)
     c = conn.cursor()
@@ -25,7 +26,6 @@ class StoreCorpus(Store):
       ident = document[0] 
       if len(ident)== 0:
         ident = random.randint(0,100000)
-      print ident
       text = document[1]
       QUERY = "INSERT INTO corpus VALUES ({0},\'{1}\')".format(ident,text)
       c.execute(QUERY)
