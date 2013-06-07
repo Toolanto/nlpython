@@ -18,7 +18,7 @@ class StoreCorpus(Store):
     TABLE = "CREATE TABLE corpus (id number, document text)"
     conn.execute(TABLE)
 
-  #documentHandler è un iteratore
+  #documentHandler è un iteratore della classe DocumentHandler
   def storeDB(self, documentHandler):
     conn = sqlite3.connect(self._namedb)
     c = conn.cursor()

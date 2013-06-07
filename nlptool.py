@@ -1,7 +1,9 @@
 # Developer Antonio Luca
+# coding=utf-8
 
 import nltk
 import itertools
+import math
 from documentHandler import *
 from store import *
 
@@ -26,6 +28,14 @@ class NLP():
   def getDocumentsByToken(self,token):
     docsID = [key for key in self.corpus.keys() if token in self.corpus[key]] #tutti i documenti che hanno il token
     return [(idn,self.corpusDB.searchByIdentifier(idn)) for idn in docsID] #prelevo dal db i documenti senza modifiche
+  #document è la lista di token di un documento
+  def calculate_tf(self,token,document):
+    return document.count(token)
+  def calculate_idf(self,token):
+    return math.log(float(len(self.corpus))/float((len(self.getDocumentsByToken(token))+1)))
+  def calculate_tfidf(self,token,document):
+    return self.calculate_tf(token,document)*self.calculate_idf(token)
+
   
  
 
@@ -44,4 +54,5 @@ if __name__=='__main__':
   nlp.removeStop(['casa','ciao'])
   print nlp.getCorpus()     
   print nlp.getDocumentsByToken("sono")
+  print "tf: {0}, idf: {1}, tf-idf di sono nel documento 0: {2}".format(nlp.calculate_tf("sono",nlp.getCorpus()[0]),nlp.calculate_idf("sono"),nlp.calculate_tfidf("sono",nlp.getCorpus()[0]))
   
