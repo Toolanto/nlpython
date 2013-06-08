@@ -14,7 +14,7 @@ class NLP():
     self.corpusDB = StoreCorpus(nameCorpus) #è il corpus salvato nel db senza modifiche
     self.corpusDB.makeDB()
     self.corpusDB.storeDB(d)
-    self.corpus = [] #il corpus salvato in memoria a cui si possono apportare delle modifiche
+    self.corpus = {} #il corpus salvato in memoria a cui si possono apportare delle modifiche
   def delete(self):
     self.corpusDB.deleteDB()
   def getCorpus(self):
@@ -35,12 +35,33 @@ class NLP():
     return math.log(float(len(self.corpus))/float((len(self.getDocumentsByToken(token))+1)))
   def calculate_tfidf(self,token,document):
     return self.calculate_tf(token,document)*self.calculate_idf(token)
-  def bigramm(self,n):
-    pass
-    
-  
- 
+  #ngram di tipo Ngram
+  #def transformngram(self,ngram):
+  #  self.corpusngram {key : [ngram.findgram(value)] for key,value in self.corpus}    
+      
+        
 
+
+
+class Ngram():
+  def findgram(self,text):
+    pass
+
+class Bigram(Ngram):
+  def __init__(self):
+    self._ngram = 2
+  #text = ['a',.]
+  def findgram(self,text):
+    return nltk.util.ngrams(text,self._ngram)
+
+class Trigramm(Ngram):
+  def __init__(self):
+    self._ngram = 3
+  #text = ['a',.]
+  def findgram(self,text):
+    return nltk.util.ngrams(text,self._ngram)
+             
+    
 #Passando una regex  al costruttore si ha una tokenizzazione custom
 class CustomTokenizer(nltk.RegexpTokenizer):
   def __init__(self,customRegex):
@@ -57,4 +78,5 @@ if __name__=='__main__':
   print nlp.getCorpus()     
   print nlp.getDocumentsByToken("sono")
   print "tf: {0}, idf: {1}, tf-idf di sono nel documento 0: {2}".format(nlp.calculate_tf("sono",nlp.getCorpus()[0]),nlp.calculate_idf("sono"),nlp.calculate_tfidf("sono",nlp.getCorpus()[0]))
+  print nlp.transformngram(Bigram())
   

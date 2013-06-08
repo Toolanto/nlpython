@@ -41,7 +41,7 @@ class StoreCorpus(Store):
     var = (identifier,)
     conn = sqlite3.connect(self._namedb)
     c = conn.cursor()
-    return [row for row in c.execute("SELECT document FROM corpus WHERE id==?",var)]
+    return [row[0] for row in c.execute("SELECT document FROM corpus WHERE id==?",var)]
 
   def searchAll(self):
     conn = sqlite3.connect(self._namedb)
