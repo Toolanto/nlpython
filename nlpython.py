@@ -5,7 +5,7 @@ from nlptool import *
   
 
 print "\n\n******* NLP programm *******\n"
-documents = raw_input ("Give corpus's path:")
+documents = raw_input ("Give corpus's path: ")
 nlp = NLP(documents,"corpus.db")
 print "\nTokenize: waiting for a monent...\n"
 nlp.tokenize()
@@ -19,11 +19,12 @@ if (response == 'y' or response == 'Y'):
 exit = True
 while (exit):
   n = int(input('''\nSelect menù:
-           \n1) tf of a term
-           \n2) Give documents by token
-           \n3) tf-idf
-           \nany value to exit
-           \nReply:  '''))      
+           1) tf of a term
+           2) Give documents by token
+           3) tf-idf
+           4) find ngram
+           any value to exit
+           Reply:  '''))      
   if n == 1:
     term = raw_input("\nEnter term: ")
     print "\tidDoc\ttf"
@@ -35,11 +36,11 @@ while (exit):
     documents = nlp.getDocumentsByToken(token)
     print documents
   if n == 3:
-    token = raw_input("\nEnter token: ")
-    print "\tidDoc\ttf-idf"
-    for key in nlp.getCorpus().keys():
-      tfidf = nlp.calculate_tfidf(token,nlp.getCorpus()[key])
-      print "\t{0}\t{1}".format(key,tfidf)
+    document = input("\nEnter document's id: ")
+    print "\tterm\ttf-idf"
+    for term in nlp.getCorpus()[document]:
+      tfidf = nlp.calculate_tfidf(term,nlp.getCorpus()[document])
+      print "\t{0}\t{1}".format(term,tfidf)
   if n not in[1,2,3]:
     exit = False
 
