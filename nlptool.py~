@@ -54,13 +54,18 @@ class NLP():
     return math.log(float(len(self.corpus))/float((len(self.getDocumentsByToken(token))+1)))
   
   def calculate_tfidf(self,token,document):
-    print self.calculate_tf(token,document)
-    print self.calculate_idf(token)
     return self.calculate_tf(token,document)*self.calculate_idf(token)
   
-  def findngram(self,ngram):
-    return {key:nltk.util.ngrams(doc,ngram) for key,doc in self.corpus.items()}
-  
+  def findngram(self,document,ngram,threshold):
+    allgram = [[n for n in gram] for gram in nltk.util.ngrams(self.corpus[document],ngram)]
+    return [gram for gram in allgram if self.calculate_tfidf(' '.join(gram),self.corpus[document]) > threshold]
+    
+
+    
+#Passando una regex  al costruttore si ha una tokenizzazione custom
+class CustomTokenizer(nltk.RegexpTokenizer):
+  def __init__(self,customRegex):
+    nltk.RegexpTokenizer.__init__(self,customRegex,gaps=True)
         
 '''
 class Ngram():
@@ -80,14 +85,6 @@ class Trigramm(Ngram):
   def findgram(self,text):
     return nltk.util.ngrams(text,3)
 '''             
-    
-#Passando una regex  al costruttore si ha una tokenizzazione custom
-class CustomTokenizer(nltk.RegexpTokenizer):
-  def __init__(self,customRegex):
-    nltk.RegexpTokenizer.__init__(self,customRegex,gaps=True)
-    
-  
-  
  
 if __name__=='__main__':
   nlp = NLP("document.txt","corpus.db")
@@ -99,5 +96,5 @@ if __name__=='__main__':
   print "tf: {0}".format(nlp.calculate_tf("sono a",nlp.getCorpus()[0]))
   print "idf: {0}".format(nlp.calculate_idf("sono a")) 
   print "tf_idf: {0}".format(nlp.calculate_tfidf("sono a",nlp.getCorpus()[0]))
-  #print nlp.findngram(3)
+  print nlp.findngram(0,2,0.3)
   
