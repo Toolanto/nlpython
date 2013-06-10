@@ -1,6 +1,8 @@
 # Developer Antonio Luca
 # coding=utf-8
+
 import sqlite3
+import re
 import random
 
 class Store:
@@ -17,17 +19,23 @@ class StoreCorpus(Store):
     conn = sqlite3.connect(self._namedb)
     TABLE = "CREATE TABLE corpus (id number, document text)"
     conn.execute(TABLE)
-
-  #documentHandler è un iteratore della classe DocumentHandler
-  def storeDB(self, documentHandler):
+  
+  def storeDB(self, csvHandler):
     conn = sqlite3.connect(self._namedb)
     c = conn.cursor()
-    for document in documentHandler:
-      ident = document[0] 
-      if len(ident)== 0:
+    for document in csvHandler.readconcactString():
+      ident = document[0]
+      if ident == '':
         ident = random.randint(0,100000)
       text = document[1]
-      QUERY = "INSERT INTO corpus VALUES ({0},\'{1}\')".format(ident,text)
+      #verifico se nel documento ci sono caratteri speciali es. "word" -> \"word\"
+      pattern = "\""
+      text = re.sub(pattern,'"',text)
+      pattern = "\\'"
+      text = re.sub(pattern,"''",text)
+      text = text
+      print text    
+      QUERY = "INSERT INTO corpus VALUES ({0},\'{1}\')".format(int(ident),text[1:len(text)-1].encode('utf-8'))
       c.execute(QUERY)
       conn.commit()
   
@@ -41,7 +49,7 @@ class StoreCorpus(Store):
     var = (identifier,)
     conn = sqlite3.connect(self._namedb)
     c = conn.cursor()
-    return [row for row in c.execute("SELECT document FROM corpus WHERE id==?",var)]
+    return [row[0] for row in c.execute("SELECT document FROM corpus WHERE id==?",var)]
 
   def searchAll(self):
     conn = sqlite3.connect(self._namedb)

@@ -5,17 +5,21 @@ import nltk
 import itertools
 import math
 import re
-from documentHandler import *
+from csvHandler import *
 from store import *
 
+#Passando una regex  al costruttore si ha una tokenizzazione custom
+class CustomTokenizer(nltk.RegexpTokenizer):
+  def __init__(self,customRegex):
+    nltk.RegexpTokenizer.__init__(self,customRegex,gaps=True)
 
 class NLP():
   def __init__(self,pathDocument,nameCorpus):
-    d = DocumentHandler(pathDocument)
+    d = CSVHandler(pathDocument)
     self.corpusDB = StoreCorpus(nameCorpus) #è il corpus salvato nel db senza modifiche
     self.corpusDB.makeDB()
     self.corpusDB.storeDB(d)
-    self.corpus = {} #il corpus salvato in memoria a cui si possono apportare delle modifiche
+    self.corpus = {} #il corpus salvato in memoria tokenizato
  
   def delete(self):
     self.corpusDB.deleteDB()
@@ -26,6 +30,9 @@ class NLP():
   #regexTokenizer è la classe o la sottoclasse di RegexpTokenizer
   def tokenize(self,regexpTokenizer=nltk.WhitespaceTokenizer()):
     self.corpus = {idn:regexpTokenizer.tokenize(text) for idn,text in self.corpusDB.searchAll()}
+    for key,doc in self.corpus.items():
+      temp = [token.lower() for token in doc]
+      self.corpus[key] = temp
   #rimozione delle stopword nel corpus in memoria
   def removeStop(self,listWord):
     self.corpus = {key : [word for word in self.corpus[key] if word not in listWord] for key in self.corpus.keys()} 
@@ -59,40 +66,21 @@ class NLP():
   def findngram(self,document,ngram,threshold):
     allgram = [[n for n in gram] for gram in nltk.util.ngrams(self.corpus[document],ngram)]
     return [gram for gram in allgram if self.calculate_tfidf(' '.join(gram),self.corpus[document]) > threshold]
+  
     
-#Passando una regex  al costruttore si ha una tokenizzazione custom
-class CustomTokenizer(nltk.RegexpTokenizer):
-  def __init__(self,customRegex):
-    nltk.RegexpTokenizer.__init__(self,customRegex,gaps=True)
-        
-'''
-class Ngram():
-  def findgram(self,text,number):
-    pass
 
-class Bigram(Ngram):
-  #text = ['a',.]
-  def findgram(self,text):
-    #bigram_measures = nltk.BigramAssocMeasures()
-    #bigrams = nltk.BigramCollocationFinder.from_words(text)
-    #return bigrams.nbest(bigram_measures.pmi,10)
-    return nltk.util.ngrams(text,2)
-
-class Trigramm(Ngram):
-  #text = ['a',.]
-  def findgram(self,text):
-    return nltk.util.ngrams(text,3)
-'''             
+          
  
 if __name__=='__main__':
   nlp = NLP("document.txt","corpus.db")
   nlp.tokenize()
   print nlp.getCorpus()
-  #nlp.removeStop(['casa','ciao'])
-  print nlp.getCorpus()     
-  print nlp.getDocumentsByToken("sono a casa")
-  print "tf: {0}".format(nlp.calculate_tf("sono a",nlp.getCorpus()[0]))
-  print "idf: {0}".format(nlp.calculate_idf("sono a")) 
-  print "tf_idf: {0}".format(nlp.calculate_tfidf("sono a",nlp.getCorpus()[0]))
-  print nlp.findngram(0,2,0.3)
+  #nlp.removeStop(['casa','ciao'])   
+  for key,doc in nlp.getDocumentsByToken("file"):
+    print key,doc[0].encode('utf-8')
+  #print "tf: {0}".format(nlp.calculate_tf("file",nlp.getCorpus()[0]))
+  #print "idf: {0}".format(nlp.calculate_idf("file")) 
+  #print "tf_idf: {0}".format(nlp.calculate_tfidf("file",nlp.getCorpus()[0]))
+  #print nlp.findngram(0,2,0.3)
+  nlp.delete()
   

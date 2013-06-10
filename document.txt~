@@ -1,0 +1,3 @@
+0,u"Sono dei file .txt che possono avere un ID ma non è detto e una data. Il file di testo contiene tutti i documenti dove: ogni riga è un"
+1,u"documento. Per separare l'ID dal testo si utilizza un CSV. Un esempio puo essere: ID, "TESTO". Ma visto che non sappiamo come verrano dati"
+,u"testi allora il csv deve essere parametrico magari utilizzando delle librerie per gestire csv."
