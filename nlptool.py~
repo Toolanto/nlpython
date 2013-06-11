@@ -87,7 +87,7 @@ class StandardNLP(NLP):
 
 
 if __name__=='__main__':
-  rnlp = RegexNLP("document.txt","corpus.db")
+  '''rnlp = RegexNLP("document.txt","corpus.db")
   rnlp.tokenize()
   print rnlp.getCorpus()['CAPITOLO VIII']
   
@@ -106,7 +106,7 @@ if __name__=='__main__':
      gram +=" "
     print gram
   rnlp.delete()
-
+  '''
 
   snlp = StandardNLP("document.txt","corpus.db")
   snlp.tokenize()
