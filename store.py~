@@ -17,7 +17,7 @@ class StoreCorpus(Store):
   
   def makeDB(self):
     conn = sqlite3.connect(self._namedb)
-    TABLE = "CREATE TABLE corpus (id number, document text)"
+    TABLE = "CREATE TABLE corpus (id varchar, document text)"
     conn.execute(TABLE)
   
   def storeDB(self, csvHandler):
@@ -32,11 +32,10 @@ class StoreCorpus(Store):
       pattern = "\""
       text = re.sub(pattern,'"',text)
       pattern = "\\'"
-      text = re.sub(pattern,"''",text)
-      text = text
-      print text    
-      QUERY = "INSERT INTO corpus VALUES ({0},\'{1}\')".format(int(ident),text[1:len(text)-1].encode('utf-8'))
-      c.execute(QUERY)
+      text = re.sub(pattern,"''",text) 
+      #QUERY = "INSERT INTO corpus VALUES ({0},\'{1}\')".format(ident,text[1:len(text)-1].encode('utf-8'))
+      QUERY = "INSERT INTO corpus VALUES (?,?)"
+      c.execute(QUERY,(ident,text[1:len(text)-1]))
       conn.commit()
   
   def deleteDB(self):

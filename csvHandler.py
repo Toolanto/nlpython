@@ -14,14 +14,15 @@ class CSVHandler:
   def __init__(self,path,dialect = CustomDialect):
     self._path = path
     self._dialect = dialect
+
   def reader(self):
     uf = codecs.open(self._path,'rb','utf-8')
-    self._documents = [(c[0],c[1])for c in unicode_csv_reader(uf,self._dialect)]
+    self._documents = [(c[0],c[1:]) for c in unicode_csv_reader(uf,self._dialect)]
     return self._documents 
 
-  def readconcactString(self, stringjoin = ','):
+  def readconcactString(self, stringjoin = CustomDialect.delimiter):
     self.reader()
-    self._documents = [[testo[0], stringjoin.join([term for term in testo[1:]])] for testo in self._documents]
+    self._documents = [[testo[0], stringjoin.join([term for term in testo[1]])] for testo in self._documents]
     return self._documents
 
 def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
@@ -42,7 +43,7 @@ if __name__=="__main__":
   for text in d.reader():
     print text
   #encode utf-8 in str
-  for text in d.reader():
-    print text[0],text[1].encode('utf-8')
+  for text in d.readconcactString():
+    print text[0]#,text[1].encode('utf-8')
 
  

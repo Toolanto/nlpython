@@ -7,6 +7,7 @@ import math
 import re
 from csvHandler import *
 from store import *
+from calculate import *
 
 #Passando una regex  al costruttore si ha una tokenizzazione custom
 class CustomTokenizer(nltk.RegexpTokenizer):
@@ -52,10 +53,13 @@ class RegexNLP(NLP):
   def calculate_tf(self,term,text):
     #un token può essere anche un ngramma perciò ogni documento viene convertito in stringa e si fa
     #il match per vedere quante volte compare il token all'interno del documento
-    document_str = ' '.join(text)
+    document_str = ' '.join(text).encode('utf-8')
     pattern = r"(^{0}| {0})".format(term.encode('utf-8')) #termine che puo trovarsi all'inizio del documento o al centro ma non può
                                           #essere una parte di un altro termine
-    return len(re.findall(pattern,document_str))     
+    try:
+      return len(re.findall(pattern,document_str))
+    except:
+      return -1000     
   def getDocumentsByToken(self,token):
     docsID = [key for key in self.corpus.keys() if self.calculate_tf(token,self.corpus[key])>0] #tutti i documenti che hanno il token
     return [(idn,self.corpusDB.searchByIdentifier(idn)) for idn in docsID] #prelevo dal db i documenti senza modifiche
@@ -63,8 +67,8 @@ class RegexNLP(NLP):
   #in questo modo posso inserire qualunque ngramma
   def findngram(self,document,ngram,threshold):
     allgram = [[n for n in gram] for gram in nltk.util.ngrams(self.corpus[document],ngram)]
-    #return [gram for gram in allgram if self.calculate_tfidf(' '.join(gram),self.corpus[document]) > threshold]    
-    return sorted(allgram,key = lambda x : self.calculate_tfidf(' '.join(x),self.corpus[document]),reverse = True)[:threshold]
+    return [gram for gram in allgram if self.calculate_tfidf(' '.join(gram),self.corpus[document]) > threshold]    
+    #return sorted(allgram,key = lambda x : self.calculate_tfidf(' '.join(x),self.corpus[document]),reverse = True)[:threshold]
     
 
 class StandardNLP(NLP):
@@ -79,57 +83,44 @@ class StandardNLP(NLP):
   def findngram(self,document,ngram,threshold):
     return ngram.findgram(self.corpus[document],threshold)
 
-class Ngram():
-  def findgram(self,text,threshold):
-    pass
+  
 
-class Bigram(Ngram):
-  def findgram(self,text,threshold):
-    bigram_measures = nltk.BigramAssocMeasures()
-    bigrams = nltk.BigramCollocationFinder.from_words(text)
-    return bigrams.nbest(bigram_measures.pmi,threshold)
-
- 
-class Trigram(Ngram):
-  def findgram(self,text,threshold):
-    trigram_measures = nltk.TrigramAssocMeasures()
-    trigrams = nltk.TrigramCollocationFinder.from_words(text)
-    return trigrams.nbest(trigram_measures.pmi,threshold)
 
 if __name__=='__main__':
-  rnlp = RegexNLP("document.txt","corpus.db")
+  '''rnlp = RegexNLP("document.txt","corpus.db")
   rnlp.tokenize()
-  print rnlp.getCorpus()
+  print rnlp.getCorpus()['CAPITOLO VIII']
+  
   #nlp.removeStop(['casa','ciao'])   
-  for key,doc in rnlp.getDocumentsByToken("file"):
+  for key,doc in rnlp.getDocumentsByToken("memoria"):
     print key,doc[0].encode('utf-8')
   
-  print "tf: {0}".format(rnlp.calculate_tf("file",rnlp.getCorpus()[0]))
-  print "idf: {0}".format(rnlp.calculate_idf("file")) 
-  print "tf_idf: {0}".format(rnlp.calculate_tfidf("file",rnlp.getCorpus()[0]))
+  print "tf: {0}".format(rnlp.calculate_tf("memoria",rnlp.getCorpus()['CAPITOLO VIII']))
+  print "idf: {0}".format(rnlp.calculate_idf("memoria")) 
+  print "tf_idf: {0}".format(rnlp.calculate_tfidf("memoria",rnlp.getCorpus()['CAPITOLO VIII']))
   
-  for ngram in rnlp.findngram(0,3,10):
+  for ngram in rnlp.findngram('CAPITOLO VIII',2,0.8):
     gram = ""
     for n in ngram:
      gram += n.encode('utf-8')
      gram +=" "
     print gram
   rnlp.delete()
-
+  '''
 
   snlp = StandardNLP("document.txt","corpus.db")
   snlp.tokenize()
-  print snlp.getCorpus()
+  #print snlp.getCorpus()
   #nlp.removeStop(['casa','ciao'])   
-  for key,doc in snlp.getDocumentsByToken("file"):
+  for key,doc in snlp.getDocumentsByToken('memoria'):
     print key,doc[0].encode('utf-8')
   
-  print "tf: {0}".format(snlp.calculate_tf("file",snlp.getCorpus()[0]))
-  print "idf: {0}".format(snlp.calculate_idf("file")) 
-  print "tf_idf: {0}".format(snlp.calculate_tfidf("file",snlp.getCorpus()[0]))
+  print "tf: {0}".format(snlp.calculate_tf("memoria",snlp.getCorpus()['CAPITOLO VIII']))
+  print "idf: {0}".format(snlp.calculate_idf("memoria")) 
+  print "tf_idf: {0}".format(snlp.calculate_tfidf("memoria",snlp.getCorpus()['CAPITOLO VIII']))
   
   ngram = []
-  for ngram in snlp.findngram(0,Trigram(),10):
+  for ngram in snlp.findngram('CAPITOLO VIII',Bigram(),10):
     gram = ""
     for n in ngram:
      gram += n.encode('utf-8')
