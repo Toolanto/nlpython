@@ -23,7 +23,7 @@ class StoreCorpus(Store):
   def storeDB(self, csvHandler):
     conn = sqlite3.connect(self._namedb)
     c = conn.cursor()
-    for document in csvHandler.readconcactString():
+    for document in csvHandler.reader():
       ident = document[0]
       if ident == '':
         ident = random.randint(0,100000)

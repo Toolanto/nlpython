@@ -10,6 +10,9 @@ class CustomDialect(csv.Dialect):
   lineterminator ='\r\n' 
   quoting = csv.QUOTE_NONE 
 
+class AbstractCSV:
+  def reader(self):pass
+
 class CSVHandler:
   def __init__(self,path,dialect = CustomDialect):
     self._path = path
@@ -18,10 +21,7 @@ class CSVHandler:
   def reader(self):
     uf = codecs.open(self._path,'rb','utf-8')
     self._documents = [(c[0],c[1:]) for c in unicode_csv_reader(uf,self._dialect)]
-    return self._documents 
-
-  def readconcactString(self, stringjoin = CustomDialect.delimiter):
-    self.reader()
+    stringjoin = self._dialect.delimiter
     self._documents = [[testo[0], stringjoin.join([term for term in testo[1]])] for testo in self._documents]
     return self._documents
 
@@ -40,10 +40,9 @@ def utf_8_encoder(unicode_csv_data):
 if __name__=="__main__":
   from store import *
   d = CSVHandler("document.txt")
-  for text in d.reader():
-    print text
   #encode utf-8 in str
-  for text in d.readconcactString():
-    print text[0]#,text[1].encode('utf-8')
+  #for text in d.reader():
+  #  print text[0]#,text[1].encode('utf-8')
+  print d.reader()[0]
 
  
