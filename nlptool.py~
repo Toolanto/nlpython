@@ -46,30 +46,7 @@ class NLP():
     return math.log(float(len(self.corpus))/float((len(self.getDocumentsByToken(token))+1)))  
   def calculate_tfidf(self,token,document):
     return self.calculate_tf(token,document)*self.calculate_idf(token)
-
-
-class RegexNLP(NLP):
-  #calcola il numero di occorenze di un termine in un documento, il termine può essere composto
-  def calculate_tf(self,term,text):
-    #un token può essere anche un ngramma perciò ogni documento viene convertito in stringa e si fa
-    #il match per vedere quante volte compare il token all'interno del documento
-    document_str = ' '.join(text).encode('utf-8')
-    pattern = r"(^{0}| {0})".format(term.encode('utf-8')) #termine che puo trovarsi all'inizio del documento o al centro ma non può
-                                          #essere una parte di un altro termine
-    try:
-      return len(re.findall(pattern,document_str))
-    except:
-      return -1000     
-  def getDocumentsByToken(self,token):
-    docsID = [key for key in self.corpus.keys() if self.calculate_tf(token,self.corpus[key])>0] #tutti i documenti che hanno il token
-    return [(idn,self.corpusDB.searchByIdentifier(idn)) for idn in docsID] #prelevo dal db i documenti senza modifiche
-  #gli ngrammi vengono trovati utilizzando il metodo tfidf dove il tf è calcolato usando le regex
-  #in questo modo posso inserire qualunque ngramma
-  def findngram(self,document,ngram,threshold):
-    allgram = [[n for n in gram] for gram in nltk.util.ngrams(self.corpus[document],ngram)]
-    return [gram for gram in allgram if self.calculate_tfidf(' '.join(gram),self.corpus[document]) > threshold]    
-    #return sorted(allgram,key = lambda x : self.calculate_tfidf(' '.join(x),self.corpus[document]),reverse = True)[:threshold]
-    
+  
 
 class StandardNLP(NLP):
   #il calcolo del tf è consentito solo su termini di un solo token
@@ -83,30 +60,26 @@ class StandardNLP(NLP):
   def findngram(self,document,ngram,threshold):
     return ngram.findgram(self.corpus[document],threshold)
 
-  
+class Ngram():
+  def findgram(self,text,threshold):
+    pass
+
+class Bigram(Ngram):
+  def findgram(self,text,threshold):
+    bigram_measures = nltk.BigramAssocMeasures()
+    bigrams = nltk.BigramCollocationFinder.from_words(text)
+    return bigrams.nbest(bigram_measures.pmi,threshold)
+
+ 
+class Trigram(Ngram):
+  def findgram(self,text,threshold):
+    trigram_measures = nltk.TrigramAssocMeasures()
+    trigrams = nltk.TrigramCollocationFinder.from_words(text)
+    return trigrams.nbest(trigram_measures.pmi,threshold)
 
 
 if __name__=='__main__':
-  '''rnlp = RegexNLP("document.txt","corpus.db")
-  rnlp.tokenize()
-  print rnlp.getCorpus()['CAPITOLO VIII']
-  
-  #nlp.removeStop(['casa','ciao'])   
-  for key,doc in rnlp.getDocumentsByToken("memoria"):
-    print key,doc[0].encode('utf-8')
-  
-  print "tf: {0}".format(rnlp.calculate_tf("memoria",rnlp.getCorpus()['CAPITOLO VIII']))
-  print "idf: {0}".format(rnlp.calculate_idf("memoria")) 
-  print "tf_idf: {0}".format(rnlp.calculate_tfidf("memoria",rnlp.getCorpus()['CAPITOLO VIII']))
-  
-  for ngram in rnlp.findngram('CAPITOLO VIII',2,0.8):
-    gram = ""
-    for n in ngram:
-     gram += n.encode('utf-8')
-     gram +=" "
-    print gram
-  rnlp.delete()
-  '''
+
 
   snlp = StandardNLP("document.txt","corpus.db")
   snlp.tokenize()
