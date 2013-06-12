@@ -13,7 +13,7 @@ class CustomDialect(csv.Dialect):
 class AbstractCSV:
   def reader(self):pass
 
-class CSVHandler:
+class CSVHandler(AbstractCSV):
   def __init__(self,path,dialect = CustomDialect):
     self._path = path
     self._dialect = dialect

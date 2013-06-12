@@ -85,7 +85,7 @@ def main(argv):
         bigram = nlp.findngram(document,Bigram(),step)
         trigram = nlp.findngram(document,Trigram(),step)
         for i in range(step):
-          print template.format(' '.join(bigram[i]).encode('utf-8'),' '.join(bigram[i]).encode('utf-8'))
+          print template.format(' '.join(bigram[i]).encode('utf-8'),' '.join(trigram[i]).encode('utf-8'))
       except KeyError:
         print "No documents found"
     if n == 5:
