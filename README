@@ -1,0 +1,41 @@
+NLPython
+Copyright (C) 2013 Antonio Luca <toolanto@gmail.com>
+
+=====================================================================
+
+DESCRIZIONE
+
+NLPython è un libreria utile per fare natural language processing.
+1) csvHandler.py 
+Permette di leggere un file contenente documenti socondo un dato csv.
+2) store.py
+Permette di memorizzare in una database sqlite i documenti formattati secondo un csv
+3) nlptool.py
+Contiene vari strumenti per fare analisi sui testi, come il calcolo del tf-idf di un termini
+4) nltest.py
+E' una specifica implementazione utile per vedere le potenzialità della libreria
+
+FUNZIONAMENTO
+Per eseguire nltest e vedere l'efficacia della libreria:
+
+	python nlptest.py <file_documento> [corpus]
+
+dove:
+
+file_documento  è il file dove sono memorizzati tutti i documenti, in questo caso all'interno della libreria è document.txt
+
+corpus è opzionale, indica il nome dell'istanza del database
+
+Esempio:
+	python nlptest.py document.txt corpus.db
+
+
+FORMATO CSV
+In questo caso il formato del csv é:
+
+	id_documento,"documento"
+
+dove ogni riga è un documento e l'id_documento è opzionale
+
+
+

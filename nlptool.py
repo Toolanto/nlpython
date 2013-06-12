@@ -38,6 +38,9 @@ class NLP():
   #rimozione delle stopword nel corpus in memoria
   def removeStop(self,listWord):
     self.corpus = {key : [word for word in self.corpus[key] if word.encode('utf-8') not in listWord] for key in self.corpus.keys()} 
+  
+  def removeStandard(self,language):
+    self.corpus = {key : [word for word in self.corpus[key] if word.encode('utf-8') not in nltk.corpus.stopwords.words(language)] for key in self.corpus.keys()} 
  
   def calculate_idf(self,token):
     return math.log(float(len(self.corpus))/float((len(self.getDocumentsByToken(token))+1)))  
@@ -56,7 +59,7 @@ class NLP():
   def findngram(self,idDoc,ngram,threshold):
     return ngram.findgram(self.corpus[idDoc],threshold)
   def makeVector(self,idDoc):
-    return {tok:self.calculate_tfidf(tok,self.corpus[document]) for tok in self.corpus[document]}
+    return {tok:self.calculate_tfidf(tok,idDoc) for tok in self.corpus[idDoc]}
       
 
 class Ngram():
