@@ -37,7 +37,7 @@ class NLP():
   
   #rimozione delle stopword nel corpus in memoria
   def removeStop(self,listWord):
-    self.corpus = {key : [word for word in self.corpus[key] if word not in listWord] for key in self.corpus.keys()} 
+    self.corpus = {key : [word for word in self.corpus[key] if word.encode('utf-8') not in listWord] for key in self.corpus.keys()} 
  
   def calculate_idf(self,token):
     return math.log(float(len(self.corpus))/float((len(self.getDocumentsByToken(token))+1)))  
