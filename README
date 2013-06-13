@@ -33,6 +33,6 @@ In questo caso il formato del csv é:
 	id_documento,"documento"
 
 dove ogni riga è un documento e l'id_documento è opzionale
-
+La libreria ha come obbiettivo di essere molto generica. Ma lo sviluppo delle classi che estendono le classi astratte è stato pensato per poter supportare in pieno il formato csv descritto.
 
 
