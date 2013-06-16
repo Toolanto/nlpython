@@ -4,6 +4,7 @@
 import sqlite3
 import re
 import random
+import uuid
 
 class Store:
   def makeDB(self): pass
@@ -26,7 +27,7 @@ class StoreCorpus(Store):
     for document in csvHandler.reader():
       ident = document[0]
       if ident == '':
-        ident = random.randint(0,100000)
+        ident = str(uuid.uuid4())
       text = document[1]
       #verifico se nel documento ci sono caratteri speciali es. "word" -> \"word\"
       pattern = "\""

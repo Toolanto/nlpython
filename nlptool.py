@@ -79,6 +79,27 @@ class Trigram(Ngram):
     trigrams = nltk.TrigramCollocationFinder.from_words(text)
     return trigrams.nbest(trigram_measures.pmi,threshold)
 
+
+class IndexNLP(NLP):
+  #regexTokenizer è la classe o la sottoclasse di RegexpTokenizer
+  def tokenize(self,regexpTokenizer=nltk.WhitespaceTokenizer()):
+    NLP.tokenize(self,regexpTokenizer)
+    setToken = set()
+    for token in self.corpus.values():
+      setToken.update(set(token))
+    self.inverted_index = {}
+    for token in setToken:
+      for idn in self.corpus.keys():
+        if token in self.corpus[idn]:
+          if token in self.inverted_index:
+            self.inverted_index[token].append(idn)
+          else:
+            self.inverted_index[token] = [idn]
+  def calculate_idf(self,token):
+    return math.log(float(len(self.corpus))/float((len(self.inverted_index[token])+1)))   
+    
+ 
+
 if __name__=='__main__':
   snlp = NLP("document.txt","corpus.db")
   snlp.tokenize()
@@ -100,5 +121,9 @@ if __name__=='__main__':
     print gram
 
   print snlp.makeVector('CAPITOLO VIII')
-  snlp.delete()  
-  
+
+  snlp.delete() 
+  nlp = IndexNLP("document.txt","corpus.db") 
+  nlp.tokenize()
+  print "tf_idf: {0}".format(nlp.calculate_tfidf("memoria",'CAPITOLO VIII'))
+  nlp.delete()   
