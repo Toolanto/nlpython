@@ -30,11 +30,18 @@ class NLP():
 
   #regexTokenizer è la classe o la sottoclasse di RegexpTokenizer
   def tokenize(self,regexpTokenizer=nltk.WhitespaceTokenizer()):
-    self.corpus = {idn:regexpTokenizer.tokenize(text) for idn,text in self.corpusDB.searchAll()}
-    for key,doc in self.corpus.items():
-      temp = [token.lower() for token in doc]
-      self.corpus[key] = temp
+    self.corpus = {idn:regexpTokenizer.tokenize(text.lower()) for idn,text in self.corpusDB.searchAll()}
   
+  #regexTokenizer è la classe o la sottoclasse di RegexpTokenizer
+  def sentencetokenize(self,regexpTokenizer=nltk.WhitespaceTokenizer(), length=100):
+    for idn,text in self.corpusDB.searchAll():      
+      temp = [text[i:length+i] for i in range(0,len(text),length)]
+      token = [] 
+      for tb in temp:
+         token += regexpTokenizer.tokenize(tb.lower())
+      self.corpus[idn] = token
+    self.corpus
+
   #rimozione delle stopword nel corpus in memoria
   def removeStop(self,listWord):
     self.corpus = {key : [word for word in self.corpus[key] if word.encode('utf-8') not in listWord] for key in self.corpus.keys()} 
@@ -96,8 +103,12 @@ class IndexNLP(NLP):
           else:
             self.inverted_index[token] = [idn]
   def calculate_idf(self,token):
-    return math.log(float(len(self.corpus))/float((len(self.inverted_index[token])+1)))   
+    return math.log(float(len(self.corpus))/float((len(self.inverted_index[token])+1))) 
+  def getDocumentsByToken(self,token):
+    return self.inverted_index[token]  
     
+def lowerList(text):
+  return [t.lower() for t in text]
  
 
 if __name__=='__main__':
@@ -105,8 +116,8 @@ if __name__=='__main__':
   snlp.tokenize()
   #print snlp.getCorpus()
   #nlp.removeStop(['casa','ciao'])   
-  for key,doc in snlp.getDocumentsByToken('memoria'):
-    print key,doc[0].encode('utf-8')
+  #for key,doc in snlp.getDocumentsByToken('memoria'):
+  #  print key,doc[0].encode('utf-8')
   
   print "tf: {0}".format(snlp.calculate_tf("memoria",'CAPITOLO VIII'))
   print "idf: {0}".format(snlp.calculate_idf("memoria")) 
@@ -123,7 +134,7 @@ if __name__=='__main__':
   print snlp.makeVector('CAPITOLO VIII')
 
   snlp.delete() 
-  nlp = IndexNLP("document.txt","corpus.db") 
-  nlp.tokenize()
+  nlp = NLP("document.txt","corpus.db") 
+  nlp.sentencetokenize()
   print "tf_idf: {0}".format(nlp.calculate_tfidf("memoria",'CAPITOLO VIII'))
   nlp.delete()   
