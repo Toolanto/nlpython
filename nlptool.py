@@ -104,8 +104,8 @@ class IndexNLP(NLP):
             self.inverted_index[token] = [idn]
   def calculate_idf(self,token):
     return math.log(float(len(self.corpus))/float((len(self.inverted_index[token])+1))) 
-  def getDocumentsByToken(self,token):
-    return self.inverted_index[token]  
+  #def getDocumentsByToken(self,token):
+  #  return self.inverted_index[token]  
     
 def lowerList(text):
   return [t.lower() for t in text]
@@ -134,7 +134,8 @@ if __name__=='__main__':
   print snlp.makeVector('CAPITOLO VIII')
 
   snlp.delete() 
-  nlp = NLP("document.txt","corpus.db") 
-  nlp.sentencetokenize()
+  nlp = IndexNLP("document.txt","corpus.db") 
+  nlp.tokenize()
+  print nlp.getDocumentsByToken(unicode('parola'))
   print "tf_idf: {0}".format(nlp.calculate_tfidf("memoria",'CAPITOLO VIII'))
   nlp.delete()   

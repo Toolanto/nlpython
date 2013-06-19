@@ -20,7 +20,7 @@ def main(argv):
     corpusDB = "corpus.db"
   print "\n\n******* NLP programm *******\n"
   print "\nTokenizing: waiting for a monent...\n"
-  nlp = NLP(document,corpusDB) 
+  nlp = IndexNLP(document,corpusDB) 
   regex = r'''\s+|\W+'''
   ct = CustomTokenizer(regex)
   nlp.tokenize(ct)
@@ -56,15 +56,15 @@ def main(argv):
       sys.exit()     
     if n == 1:
       term = raw_input("\nEnter term: ")
-      template = "{0:20}|{1:20}|"
+      template = "{0:50}|{1:20}|"
       print template.format("ID DOC", "TF", ) 
       for key in nlp.getCorpus().keys():
-        tf = nlp.calculate_tf(term,key)
+        tf = nlp.calculate_tf(term.decode('utf-8'),key)
         print template.format(key,tf)
     if n == 2:
-      token = unicode(raw_input("\nEnter token: "))
+      token = raw_input("\nEnter token: ")
       token = token.lower()
-      documents = nlp.getDocumentsByToken(token)
+      documents = nlp.getDocumentsByToken(token.decode('utf-8'))
       for doc in documents:
         print doc[0]
     if n == 3:
@@ -74,7 +74,7 @@ def main(argv):
         token = raw_input("Enter token: ")
         template = "{0:20}|{1:20}|" 
         print template.format("TERM", "TF-IDF", ) 
-        tfidf = nlp.calculate_tfidf(token,document)
+        tfidf = nlp.calculate_tfidf(token.decode('utf-8'),document)
         print template.format(token,tfidf)
       except KeyError:
         print "No documents found"
