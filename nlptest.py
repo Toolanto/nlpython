@@ -31,7 +31,10 @@ def main(argv):
     if response == 's' or response == 'S': 
       response = "i"
       response = raw_input("Select language, insert:\ni) for italian language\ne)for english language\nEnter: ")
-      nlp.removeStandard(language[response])
+      try:
+        nlp.removeStandard(language[response])
+      except:
+        nlp.removeStandard(language['i'])
     else:
       stopwords = raw_input("Insert the stopwords separate by comma: ")
       stopwords = stopwords.split(',')
@@ -93,7 +96,7 @@ def main(argv):
         print 'ID DOCUMENTI:'+','.join(nlp.getCorpus().keys())
         document = raw_input("\nEnter deocument's id: ")
         template = "{0:20}|{1:20}|" 
-        print template.format("BIGRAM", "TRIGRAM", ) 
+        print template.format("TERM", "TF-IDF", ) 
         i = 0        
         for token,tfidf in nlp.makeVector(document).items():
           print template.format(token.encode('utf-8'),tfidf)
