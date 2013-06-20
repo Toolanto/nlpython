@@ -109,7 +109,10 @@ class IndexNLP(NLP):
   def calculate_idf(self,token):
     return math.log(float(len(self.corpus))/float((len(self.inverted_index[token])+1))) 
   def getDocumentsByToken(self,token):
-    docID = self.inverted_index[token] # prelevo dal l'indice invertito tutti i documenti che hanno un token 
+    try:
+      docsID = self.inverted_index[token] # prelevo dal l'indice invertito tutti i documenti che hanno un token 
+    except KeyError:
+      return []
     return [(idn,self.corpusDB.searchByIdentifier(idn)) for idn in docsID] #prelevo dal db i documenti senza modifiche
 
 
