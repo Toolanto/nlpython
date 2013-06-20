@@ -62,6 +62,10 @@ class NLP():
   def getDocumentsByToken(self,token):
     docsID = [key for key in self.corpus.keys() if token in self.corpus[key]] #tutti i documenti che hanno il token
     return [(idn,self.corpusDB.searchByIdentifier(idn)) for idn in docsID] #prelevo dal db i documenti senza modifiche
+  
+  def getDocumentsByID(self,idDoc):
+    return self.corpusDB.searchByIdentifier(idDoc)
+
   #ngram è una sottoclasse di Ngram
   def findngram(self,idDoc,ngram,threshold):
     return ngram.findgram(self.corpus[idDoc],threshold)
@@ -104,9 +108,11 @@ class IndexNLP(NLP):
             self.inverted_index[token] = [idn]
   def calculate_idf(self,token):
     return math.log(float(len(self.corpus))/float((len(self.inverted_index[token])+1))) 
-  #def getDocumentsByToken(self,token):
-  #  return self.inverted_index[token]  
-    
+  def getDocumentsByToken(self,token):
+    docID = self.inverted_index[token] # prelevo dal l'indice invertito tutti i documenti che hanno un token 
+    return [(idn,self.corpusDB.searchByIdentifier(idn)) for idn in docsID] #prelevo dal db i documenti senza modifiche
+
+
 def lowerList(text):
   return [t.lower() for t in text]
  

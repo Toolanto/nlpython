@@ -48,7 +48,8 @@ def main(argv):
              3) tf-idf
              4) find ngram
              5) make vector tf-idf
-             6) show document
+             6) show document tokenize
+             7) show original document 
              any value to exit
              Enter:  ''')) 
     except:
@@ -113,9 +114,16 @@ def main(argv):
         document = raw_input("\nEnter deocument's id: ")
         print nlp.getCorpus()[document]
       except KeyError:
-        print "No documents found"      
+        print "No documents found"
+    if n == 7:
+      try:
+        print 'ID DOCUMENTI:'+','.join(nlp.getCorpus().keys())
+        document = raw_input("\nEnter deocument's id: ")
+        print ''.join(nlp.getDocumentsByID(document)).encode('utf-8')
+      except KeyError:
+        print "No documents found"       
     try:
-      if n not in[1,2,3,4,5,6]:
+      if n not in[1,2,3,4,5,6,7]:
         exit = False
     except:
       exit = False
