@@ -72,13 +72,18 @@ def main(argv):
 	      try:
 		print 'ID DOCUMENTI:'+','.join(nlp.getCorpus().keys())
 		document = raw_input("\nEnter document's id: ")
+                try:
+                  nlp.getCorpus()[document]
+                except:
+                  print "No documents found"
+                  continue
 		token = raw_input("Enter token: ")
 		template = "{0:20}|{1:20}|" 
 		print template.format("TERM", "TF-IDF", ) 
 		tfidf = nlp.calculate_tfidf(token.decode('utf-8').lower(),document)
 		print template.format(token,tfidf)
 	      except KeyError:
-		print "No documents found"
+		print "Token not found"
 	    if n == 4:
 	      try:
 		print 'ID DOCUMENTI:'+','.join(nlp.getCorpus().keys())

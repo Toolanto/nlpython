@@ -51,6 +51,7 @@ class NLP():
  
   def calculate_idf(self,token):
     return math.log(float(len(self.corpus))/float((len(self.getDocumentsByToken(token))+1)))  
+  
   def calculate_tfidf(self,token,idDoc):
     return self.calculate_tf(token,idDoc)*self.calculate_idf(token)
 
